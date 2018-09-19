@@ -45,35 +45,47 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
       return requestPromise(options);
     }
 
-    // const replayExecution = function(id){
-    //   const options =  {
-    //     'method': 'PUT',
-    //     'headers': {
-    //       'Authorization': authHeader
-    //     },
-    //     'json': true,
-    //     'url': `${apiUrl}/formulas/instances/executions/${id}/retries`
-    //   };
+    const getSteps = function(id){
+      const options =  {
+        'method': 'GET',
+        'headers': {
+          'Authorization': authHeader
+        },
+        'json': true,
+        'url': `${apiUrl}/formulas/instances/executions/${id}/steps`
+      };
+
+      requestPromise(options)
+      .then(function (response) {
+        console.log(`Successfully retreived execution steps: ${JSON.stringify(response)}`);
+      })
+      .catch(function (err) {
+        console.log(`Error replaying execution: ${err}`)
+      });
+    }
+
+    const selectStepDetails = function(stepName){
+
+    }
     //
-    //   requestPromise(options)
-    //   .then(function (response) {
-    //     console.log(`Successfully replayed execution: ${JSON.stringify(response)}`);
-    //   })
-    //   .catch(function (err) {
-    //     console.log(`Error replaying execution: ${err}`)
+    // getExecutions().then(function (response) {
+    //     console.log("Successfully retrieved executions");
+    //     prompt.get(['What step name are you looking for?'], function (err, result) {
+    //         const stepName = envs[result['What step name are you looking for?']]
+    //         return response.forEach((execution) => {
+    //             getSteps(execution.id).then(function(response){
+    //                 selectStepDetails(steName);
+    //             });
+    //         });
+    //     });
     //   });
-    // }
 
     getExecutions().then(function (response) {
         console.log("Successfully retrieved executions");
-        console.log(response);
-        //return response.filter((execution) => {
-        //  const executionTime = new Date(execution.createdDate).getTime();
-          //return execution.status === 'failed' && executionTime >= startTime.getTime() && executionTime <= endTime.getTime();
-        })//.forEach((execution) => {
-          //replayExecution(execution.id);
-        //});
-      //})
+        return response.forEach((execution) => {
+          getSteps(execution.id);
+        });
+      })
       .catch(function (err) {
         console.log(`Error fetching executions: ${err}`)
       })
