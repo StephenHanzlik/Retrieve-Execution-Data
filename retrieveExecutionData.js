@@ -57,7 +57,8 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
 
       requestPromise(options)
       .then(function (response) {
-        console.log(`Successfully retreived execution steps: ${JSON.stringify(response)}`);
+        console.log("stepName in getSteps: " + stepName);
+        //console.log(`Successfully retreived execution steps: ${JSON.stringify(response)}`);
       })
       .catch(function (err) {
         console.log(`Error replaying execution: ${err}`)
@@ -67,23 +68,15 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
     const selectStepDetails = function(stepName){
 
     }
-    //
-    // getExecutions().then(function (response) {
-    //     console.log("Successfully retrieved executions");
-    //     prompt.get(['What step name are you looking for?'], function (err, result) {
-    //         const stepName = envs[result['What step name are you looking for?']]
-    //         return response.forEach((execution) => {
-    //             getSteps(execution.id).then(function(response){
-    //                 selectStepDetails(steName);
-    //             });
-    //         });
-    //     });
-    //   });
 
     getExecutions().then(function (response) {
         console.log("Successfully retrieved executions");
-        return response.forEach((execution) => {
-          getSteps(execution.id);
+        prompt.get(['What is the name of the step you are looking for?'], function (err, result) {
+            const stepName = result['What is the name of the step you are looking for?'];
+            return response.forEach((execution) => {
+              console.log("stepName in forEach: " + stepName);
+              getSteps(execution.id);
+            });
         });
       })
       .catch(function (err) {
