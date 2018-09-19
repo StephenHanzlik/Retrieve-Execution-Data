@@ -65,7 +65,24 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
       // });
     }
 
-    const selectStepDetails = function(stepName){
+    const getStepValues = function(step){
+      const options =  {
+        'method': 'GET',
+        'headers': {
+          'Authorization': authHeader
+        },
+        'json': true,
+        'url': `${apiUrl}/formulas/instances/executions/steps/${step.id}/values`
+      };
+
+      requestPromise(options)
+      .then(function (response) {
+        console.log(`step values for ${step.stepName}: ${JSON.stringify(response)}`);
+        //console.log(`Successfully retreived execution steps: ${JSON.stringify(response)}`);
+      })
+      .catch(function (err) {
+        console.log(`Error replaying execution: ${err}`)
+      });
 
     }
 
@@ -75,7 +92,9 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
             const stepName = result['What is the name of the step you are looking for?'];
             return response.forEach((execution) => {
               getSteps(execution.id).then(function(response){
-                      //response.forEach((step)=>step.stepName === stepName)
+                response.forEach((step)=>{
+                  if(step.stepName === stepName) getStepValues(step)
+                })
               });
             });
         });
