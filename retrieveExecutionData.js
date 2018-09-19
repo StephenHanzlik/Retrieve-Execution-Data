@@ -72,6 +72,7 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
     }
 
     getExecutions().then(function (response) {
+      //// TODO: move this prompt logic to the top so that all these chained functions are easier to read.
         prompt.get(['What is the name of the step you are looking for?', 'What is the key of the value you are looking for?'], function (err, result) {
             const stepName = result['What is the name of the step you are looking for?'];
             const key = result['What is the key of the value you are looking for?'];
@@ -81,7 +82,7 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
                   if(step.stepName === stepName){
                     getStepValues(step, key).then(function(response){
                       response.forEach((stepObj)=>{
-                        //// TODO: we need to unest the value here.   
+                        //// TODO: we need to unest the value here.
                         // if(key === `${stepName}.response.body`){
                         //   console.log(stepObj.value.result)
                         // }
