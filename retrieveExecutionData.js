@@ -56,16 +56,9 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
       };
 
       return requestPromise(options)
-      // .then(function (response) {
-      //   console.log("stepName in getSteps: " + stepName);
-      //   //console.log(`Successfully retreived execution steps: ${JSON.stringify(response)}`);
-      // })
-      // .catch(function (err) {
-      //   console.log(`Error replaying execution: ${err}`)
-      // });
     }
 
-    const getStepValues = function(step){
+    const getStepValues = function(step, key){
       const options =  {
         'method': 'GET',
         'headers': {
@@ -75,25 +68,26 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
         'url': `${apiUrl}/formulas/instances/executions/steps/${step.id}/values`
       };
 
-      requestPromise(options)
-      .then(function (response) {
-        console.log(`step values for ${step.stepName}: ${JSON.stringify(response)}`);
-        //console.log(`Successfully retreived execution steps: ${JSON.stringify(response)}`);
-      })
-      .catch(function (err) {
-        console.log(`Error replaying execution: ${err}`)
-      });
-
+      return requestPromise(options)
     }
 
     getExecutions().then(function (response) {
-        console.log("Successfully retrieved executions");
-        prompt.get(['What is the name of the step you are looking for?'], function (err, result) {
+        prompt.get(['What is the name of the step you are looking for?', 'What is the key of the value you are looking for?'], function (err, result) {
             const stepName = result['What is the name of the step you are looking for?'];
+            const key = result['What is the key of the value you are looking for?'];
             return response.forEach((execution) => {
               getSteps(execution.id).then(function(response){
                 response.forEach((step)=>{
-                  if(step.stepName === stepName) getStepValues(step)
+                  if(step.stepName === stepName){
+                    getStepValues(step, key).then(function(response){
+                      response.forEach((stepObj)=>{
+                        //// TODO: we need to unest the value here.   
+                        // if(key === `${stepName}.response.body`){
+                        //   console.log(stepObj.value.result)
+                        // }
+                      })
+                    })
+                  }
                 })
               });
             });
