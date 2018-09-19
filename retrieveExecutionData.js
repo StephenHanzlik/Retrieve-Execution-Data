@@ -18,13 +18,15 @@ const isValidDate = function(dateString) {
 console.log("Please provide the following information to replay past executions:");
 
 prompt.start();
-prompt.get(['Environment (staging, us-production, uk-production?)','Formula Instance ID', 'User Token', 'Organization Token', 'Start Time UTC(i.e. 2018/01/01 00:00:00)', 'End Time UTC(i.e. 2018/01/01 00:00:00)'], function (err, result) {
+prompt.get(['Environment (staging, us-production, uk-production?)','Formula Instance ID', 'User Token', 'Organization Token', 'Start Time UTC(i.e. 2018/01/01 00:00:00)', 'End Time UTC(i.e. 2018/01/01 00:00:00)','What is the name of the step you are looking for?', 'What is the key of the value you are looking for?'], function (err, result) {
 
   const apiUrl = envs[result['Environment (staging, us-production, uk-production?)']] || envs['us-production'];
   const authHeader = `User ${result['User Token']}, Organization ${result['Organization Token']}`
   const formulaInstanceId = `${result['Formula Instance ID']}`;
   const startTime = new Date(result['Start Time UTC(i.e. 2018/01/01 00:00:00)']+'Z');
   const endTime = new Date(result['End Time UTC(i.e. 2018/01/01 00:00:00)']+'Z');
+  const stepName = result['What is the name of the step you are looking for?'];
+  const key = result['What is the key of the value you are looking for?'];
 
   if(!isValidDate(startTime) || !isValidDate(endTime)) return console.log('Invalid Date Entered. Aborting...');
   if(startTime >= endTime) return console.log('Start time must be before end time.')
@@ -72,10 +74,6 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
     }
 
     getExecutions().then(function (response) {
-      //// TODO: move this prompt logic to the top so that all these chained functions are easier to read.
-        prompt.get(['What is the name of the step you are looking for?', 'What is the key of the value you are looking for?'], function (err, result) {
-            const stepName = result['What is the name of the step you are looking for?'];
-            const key = result['What is the key of the value you are looking for?'];
             return response.forEach((execution) => {
               getSteps(execution.id).then(function(response){
                 response.forEach((step)=>{
@@ -83,16 +81,21 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
                     getStepValues(step, key).then(function(response){
                       response.forEach((stepObj)=>{
                         //// TODO: we need to unest the value here.
-                        // if(key === `${stepName}.response.body`){
-                        //   console.log(stepObj.value.result)
-                        // }
+                        if(stepObj.key === `${stepName}.response.body`){
+                          //console.log("stepObj: " + stepObj);
+                          //console.
+                            //stepObj.value.result.forEach((obj)=>{
+                              //  if(obj.new[key]){
+                                //  return obj.new[key];
+                              //  }
+                          //  })
+                        }
                       })
                     })
                   }
                 })
               });
             });
-        });
       })
       .catch(function (err) {
         console.log(`Error fetching executions: ${err}`)
