@@ -14,8 +14,8 @@ const envs = {
 const isValidDate = function(dateString) {
   return dateString instanceof Date && dateString != 'Invalid Date';
 }
-
-console.log("Please provide the following information to replay past executions:");
+console.log("IMPORTANT: Customer data is sensitive.  Delete this data after you are finished debugging your issue.");
+console.log("Please provide the following information to retrieve execution data:");
 
 prompt.start();
 prompt.get(['Environment (staging, us-production, uk-production?)','Formula Instance ID', 'User Token', 'Organization Token', 'Start Time UTC(i.e. 2018/01/01 00:00:00)', 'End Time UTC(i.e. 2018/01/01 00:00:00)','What is the name of the step you are looking for?', 'What is the key of the value you are looking for?'], function (err, result) {
@@ -89,6 +89,8 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
                                 //  return obj.new[key];
                               //  }
                           //  })
+                          //// TODO: remind users again to delete customer data
+                        //  console.log("IMPORTANT: Customer data is sensitive.  Delete this data after you are finished debugging your issue.")
                         }
                       })
                     })
