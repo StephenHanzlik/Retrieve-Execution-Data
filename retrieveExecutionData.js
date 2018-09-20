@@ -91,6 +91,8 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
                           //  })
                           //// TODO: remind users again to delete customer data
                         //  console.log("IMPORTANT: Customer data is sensitive.  Delete this data after you are finished debugging your issue.")
+                        //TODO: export these to logs in some readable way
+                        //// TODO: add some sort of search functionality
                         }
                       })
                     })
