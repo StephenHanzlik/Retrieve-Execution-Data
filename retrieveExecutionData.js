@@ -23,13 +23,13 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
   const apiUrl = envs[result['Environment (staging, us-production, uk-production?)']] || envs['us-production'];
   const authHeader = `User ${result['User Token']}, Organization ${result['Organization Token']}`
   const formulaInstanceId = `${result['Formula Instance ID']}`;
-  const startTime = new Date(result['Start Time UTC(i.e. 2018/01/01 00:00:00)']+'Z');
-  const endTime = new Date(result['End Time UTC(i.e. 2018/01/01 00:00:00)']+'Z');
+//  const startTime = new Date(result['Start Time UTC(i.e. 2018/01/01 00:00:00)']+'Z');
+//  const endTime = new Date(result['End Time UTC(i.e. 2018/01/01 00:00:00)']+'Z');
   const stepName = result['What is the name of the step you are looking for?'];
   const key = result['What is the key of the value you are looking for?'];
 
-  if(!isValidDate(startTime) || !isValidDate(endTime)) return console.log('Invalid Date Entered. Aborting...');
-  if(startTime >= endTime) return console.log('Start time must be before end time.')
+  //if(!isValidDate(startTime) || !isValidDate(endTime)) return console.log('Invalid Date Entered. Aborting...');
+//  if(startTime >= endTime) return console.log('Start time must be before end time.')
 
   prompt.get([`Retrieving executions of formula instance ID #${formulaInstanceId} from ${startTime} to ${endTime} on ${apiUrl} using Authorization: ${authHeader}. Enter 'yes' to proceed.`], function(err, result) {
     if(result[`Retrieving executions of formula instance ID #${formulaInstanceId} from ${startTime} to ${endTime} on ${apiUrl} using Authorization: ${authHeader}. Enter 'yes' to proceed.`].toLowerCase() !== 'yes') return console.log('Aborting...');
@@ -74,12 +74,13 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
     }
 
     getExecutions().then(function (response) {
+      console.log("executions: " + JSON.stringify(response))
             return response.forEach((execution) => {
-              getSteps(execution.id).then(function(response){
-                response.forEach((step)=>{
-                  if(step.stepName === stepName){
-                    getStepValues(step, key).then(function(response){
-                      response.forEach((stepObj)=>{
+            //  getSteps(execution.id).then(function(response){
+                //response.forEach((step)=>{
+                //  if(step.stepName === stepName){
+                  //  getStepValues(step, key).then(function(response){
+                      //response.forEach((stepObj)=>{
                         //// TODO: we need to unest the value here.
                         if(stepObj.key === `${stepName}.response.body`){
                           //console.log("stepObj: " + stepObj);
@@ -94,11 +95,11 @@ prompt.get(['Environment (staging, us-production, uk-production?)','Formula Inst
                         //TODO: export these to logs in some readable way
                         //// TODO: add some sort of search functionality
                         }
-                      })
-                    })
-                  }
-                })
-              });
+                    //  })//response.forEach
+                    //})//getStepValues
+                //  } //if(step.stepName
+              //  })//response.forEach
+            //});//getSteps()
             });
       })
       .catch(function (err) {
